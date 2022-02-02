@@ -1,35 +1,35 @@
 import pandas as pd
-
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
 
-df = pd.read_csv("Urban_Park_Ranger_Animal_Condition_Response.csv")
+# Spreadsheet URL
+sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
+df = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
+
+# Number of "Mask Please" signs in the database
+num_of_signs = str(len(df))
 
 # you need to include __name__ in your Dash constructor if
 # you plan to use a custom CSS or JavaScript in your Dash apps
 app = dash.Dash(__name__)
 
-#---------------------------------------------------------------
+# ---------------------------------------------------------------
 app.layout = html.Div([
     html.Div([
-        html.Label(['NYC Calls for Animal Rescue']),
+        html.Label(['Masks Please - Filters']),
         dcc.Dropdown(
             id='my_dropdown',
             options=[
-                     {'label': 'Action Taken by Ranger', 'value': 'Final Ranger Action'},
-                     {'label': 'Age', 'value': 'Age'},
-                     {'label': 'Animal Health', 'value': 'Animal Condition'},
-                     {'label': 'Borough', 'value': 'Borough'},
-                     {'label': 'Species', 'value': 'Animal Class'},
-                     {'label': 'Species Status', 'value': 'Species Status'}
+                {'label': 'Gender', 'value': 'Gender'},
+                {'label': 'Number', 'value': 'Number'},
             ],
-            value='Animal Class',
+            value='Gender',  # default
             multi=False,
             clearable=False,
-            style={"width": "50%"}
+            # style={"width": "50%"}
         ),
     ]),
 
@@ -39,22 +39,40 @@ app.layout = html.Div([
 
 ])
 
-#---------------------------------------------------------------
+
+# ---------------------------------------------------------------
+
+
 @app.callback(
     Output(component_id='the_graph', component_property='figure'),
     [Input(component_id='my_dropdown', component_property='value')]
 )
-
 def update_graph(my_dropdown):
+    # copying the datafile
     dff = df
+    title = ""
+    if my_dropdown == "Gender":
+        title = 'מין הפנייה בשלטים'
+    elif my_dropdown == "Number":
+        title = 'ריבוי הפנייה בשלטים'
+    pie_chart = px.pie(
+        data_frame=dff,
+        values='Amount',
+        names=my_dropdown,
+        color=my_dropdown,
+        # color_discrete_map={"male":"blue","female":"red","none":"yellow","both":"green"},
+        # hover_data='plural' #adding extra data
+        # labels={"gender": "Gender", "type": "Amount"},
+        template='presentation',
+        title=title
+    )
+    # Adding a label with the amount of masks signs in the database
+    pie_chart.update_layout(dict(annotations=[{'x': 0.5, 'y': -0.2,
+                                               'text': 'Total Amount of mask signs:  ' + num_of_signs,
+                                               'font': {'color': 'rgb(0, 0, 0)', 'size': 15},
+                                               'showarrow': False, 'xanchor': 'center'}]))
 
-    piechart=px.pie(
-            data_frame=dff,
-            names=my_dropdown,
-            hole=.3,
-            )
-
-    return (piechart)
+    return pie_chart
 
 
 if __name__ == '__main__':
