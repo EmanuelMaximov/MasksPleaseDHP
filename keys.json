@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ds-project-340019",
+  "private_key_id": "7d490c00c3550265b73b3467ad11c9680692f948",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBPrlBm9qhGl7a\nUr8fNJAxtoNu+gp6N6EqSt4DZn0PbvK9aXEooHC8sxkrgua42T3FUEXvXnoMp2JC\noewHGIPHHG1/N4VgEaqKfT4d32koeo1JCNmiXV+uHBOQvBiUPexmq7L64U+YeIiZ\n+IpJxG45uWt7cbjB0B6gGlVSprOok93/h5WxJo868bxKNjeVKffrxr7Yvo1VRVSV\nEEnLnRP2YEnsr/OGv624KSj20wxTd6SLA0I2N8i9Oa89fLA+sMbDVn5Gu8PBQyaJ\n3YAkVKU4JoLlHRQNTxFNgpEvLBnsf6iQ0vx9pVwbNjodkzi7b98RWS2oUxwKDPye\nL1df7wB9AgMBAAECggEAGEXwrzUMeT/+uh26tAi+NABg8gemWUOzksRkrrio7M9a\n3j/oXtoITyuP9c8ze/SNtcMnhbGwUvaTeRstspZ5twDzIA+xSSfu7AZfTxFI/DSo\nmovqCmMAKbaNHpkB3V0J3Lukd67leJlrTyvQ8wMhdU69GXxnYLDrp+Cm5wLZfksc\nf3aP/rsulw3IX7o+NZIZielyHfuZ9FASGxN2FElmRYtVqdUuPwhwXtjKxYSk0zgZ\n3rkRw2UEhioj2VBrbPxLi3r8uqtUQIutLuhBe1vWsEJ02Hr8vbomkY6BMLA2iWbQ\nCmkD1kI9Uxdsrpvt54Npji+vUjcciVtqEmoMt1u9YQKBgQDxVReQVeoD62URHcup\ntaVhG7GnfeZZuvqDODMSib338JeVbM2B1mNjTJc7QvOZ6nv/p2JOmi6acdZPfcgS\nqotRwRt+YZ+BgouFaIPS1LFFSEQKEzBVnsFgvlsy0SQK548av4zHu3dpbdYKBhdj\nefFwHfSsABJgFDGnc8H6rwAWTwKBgQDM/W/J+xtKTup6fTCmweciwQ/9f7xW7tD2\nVXnqJEhEHB/tzujo+YtUZNER1DusYZ1x7L4LWqSslBMz2vBs5cGtfWzAB7CRfKrD\nYd2FZJ6VjBYPfhbf/uIkoGk2FtXUAcmy2TPZucfVpwIncgXEupyA0EZ7ITYTRPjU\n3C4ymkeVcwKBgHvsWwZF574NgT9x0mQaH4snAmnkj4WiKwN4t1kcnA0WYXBch4bV\nhQG3kazfq2Fs9DGKTUPZjnbGX+s/xp43LwVTKQATtyl01Joz2gVILKNMAYw+4EIH\nHHvGI+SLWnuy/lwY4nypuh7MRO2uxRHSy3TsHPi5rLXjiL/ZBFHqzRunAoGAFq7k\ns+EJgAuDftJjk9BZF0ttzYtY9/WtQdTrjLE/HepOzi3bMAyNEmWljOeDQuv6VCTy\nUqdRGZe5GD/d4u75o40Bf65aJ384Fi66KIydz8aUmlpFhbvaolrtyYJ1XuRjwVqv\nliQsrMOyRVMkuEQ+FTL22aEvLqqvLj6/DfJsgWkCgYEAyol4q4X8USicIc/iK29i\n+dehtrQqjprwke5ysF+4ut+tZ6OjPx/zISnaJXY9ZhhRqIqcILtYElrDoIHtJ6CQ\n/OUaBa3SQPNzGR64J26h5usFZGm5b7ktXv510SwC5C8zgXYexRQvkkkR3IgAci2A\n4lgldMTP79fy6jBiPULaDP8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "digitalhumanitiesproject@ds-project-340019.iam.gserviceaccount.com",
+  "client_id": "116571299406340921299",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/digitalhumanitiesproject%40ds-project-340019.iam.gserviceaccount.com"
+}
