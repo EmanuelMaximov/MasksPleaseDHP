@@ -1,12 +1,5 @@
 from __future__ import print_function
-
-import os.path
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 # go to the project and import service account
 from google.oauth2 import service_account
@@ -23,7 +16,7 @@ creds = service_account.Credentials.from_service_account_file(
 # full spreadsheet URL:
 # https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=263391688
 SAMPLE_SPREADSHEET_ID = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
-SAMPLE_RANGE_NAME = "Sheet2!B2:B"  # the column with the description
+SAMPLE_RANGE_NAME = "Sheet2!A:A"  # the column with the description
 
 
 def main():
@@ -38,7 +31,7 @@ def main():
     print(values)
 
     ######## Write ########
-    input = [[True,False,True], [True]] #list of lists
+    input = [[True, False, True], [True]]  # list of lists
     body_input = {"values": input}
     insert_request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                            range="Sheet2!C5", valueInputOption="USER_ENTERED",

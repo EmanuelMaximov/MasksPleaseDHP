@@ -8,7 +8,8 @@ import plotly.express as px
 # Spreadsheet URL
 sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
 df = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
-
+check = df['Number']
+print(check)
 # Number of "Mask Please" signs in the database
 num_of_signs = str(len(df))
 
