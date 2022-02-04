@@ -1,28 +1,7 @@
-if __name__ == '__main__':
-    # Send a POST request to: https:##nakdan-4-0.loadbalancer.dicta.org.il/addnikud
-    # Header: Content-Type: text/plain;charset=UTF-8
-    # [Note: Encoding of your web client should be set to UTF8]
-
-    # The POST request should be in JSON format, with the following parameters:
-    # "task" = "nakdan"
-    # "genre" = "modern" or "rabbinic" or "premodern" ## for handling text with interspersed Aramaic, use "rabbinic"; for Haskalah-period texts, use "premodern"
-    # "data" = "טקסט טקסט טקסט"  ## here is where you put your text (maximum of 30000 characters; if your text is longer, please break it up into chunks)
-    # "addmorph" = True/False ## choose whether to return morphological tagging for each word (part of speech, lexeme, gender, number, person, etc.)
-    # "matchpartial" = True/False  ## choose whether the system should take advantage of partial nikud in the input text in order to constrain options
-    # "keepmetagim" = True/False  ## if True, marks matres lectionis with meteg. If False, removes the matres lectionis
-    # "keepqq" = True/False    ## to use the Qamatz Qatan character where relevant (otherwise regular qamatz is always used)
-
-    # The speed of the server depends on the load at any given moment, but probably averages around a few hundreds words/sec plus transfer time for the request. Please space out requests with a 10-20 second wait between requests, so as not to overload our server (and please do not send multiple requests in parallel) . If you have a particularly large text to process, send it over to us and we will be happy to run it locally on a dedicated machine, to avoid network transfer times, and to avoid server overload.
-
-    # *** The Return Packet ***
-    # The return value is a JSON list of objects, where each object is either a word or a separator (denoted by the flag "sep"). For each word, you'll receive the predicted vocalized form and the predicted morphological tag.  We mark the separation between prefix and word (if any) with a vertical pipe.
-    # If it is a separator, the value is in the "word" field. Otherwise, the relevant information will be the first entry in the "options" field: "w" is the vocalized word with prefix segmentation; "lex" is the lemma; "morph" is a bitfield indicating the morphological characteristics (see below for details).
-    # Note that anything that isn't a Hebrew word is considered a separator.
-
-    # *** Sample Python Code for calling Dicta API ***
-
-    import requests
-    import json
+import GoogleAPI as ga
+import DropDownPieCharts as ddpc
+import requests
+import json
 
 
 def process_text(text):
@@ -167,3 +146,14 @@ def rec_imperative(ds):
         if item['imperative'] == 'imperative':
             return 'imperative'
     return 'not imperative'
+
+
+if __name__ == '__main__':
+    description_cells = ga.read_from_spreadsheet()
+    for cell in description_cells:
+        for text in cell:
+            processed_text = process_text(text)
+            print("Gender: ", rec_gender(processed_text),
+                  ", Number: ", rec_number(processed_text),
+                  ", Imperative: ", rec_imperative(processed_text),
+                  ", Negative: ", rec_pos_neg(processed_text))

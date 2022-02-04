@@ -16,27 +16,25 @@ creds = service_account.Credentials.from_service_account_file(
 # full spreadsheet URL:
 # https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=263391688
 SAMPLE_SPREADSHEET_ID = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
-SAMPLE_RANGE_NAME = "Sheet2!A:A"  # the column with the description
+SAMPLE_RANGE_NAME = "Sheet2!A2:A"  # the column with the description
 
 
-def main():
-    ######## Read ########
+def read_from_spreadsheet():
     service = build('sheets', 'v4', credentials=creds)
-
     # Call the Sheets API
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
-    print(values)
+    return values
 
-    ######## Write ########
+
+def write_to_spreadsheet():
+    service = build('sheets', 'v4', credentials=creds)
+    # Call the Sheets API
+    sheet = service.spreadsheets()
     input = [[True, False, True], [True]]  # list of lists
     body_input = {"values": input}
     insert_request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                            range="Sheet2!C5", valueInputOption="USER_ENTERED",
                                            body=body_input).execute()
-
-
-if __name__ == '__main__':
-    main()
