@@ -8,10 +8,12 @@ import plotly.express as px
 # Spreadsheet URL
 sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
 df = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
-check = df['Number']
-print(check)
+
 # Number of "Mask Please" signs in the database
 num_of_signs = str(len(df))
+
+# for counting cells instead of adding Amount Column
+amount = [1 for i in range(len(df))]
 
 # you need to include __name__ in your Dash constructor if
 # you plan to use a custom CSS or JavaScript in your Dash apps
@@ -26,6 +28,8 @@ app.layout = html.Div([
             options=[
                 {'label': 'Gender', 'value': 'Gender'},
                 {'label': 'Number', 'value': 'Number'},
+                {'label': 'Tense', 'value': 'Tense'},
+                {'label': 'Position', 'value': 'Position'}
             ],
             value='Gender',  # default
             multi=False,
@@ -56,9 +60,13 @@ def update_graph(my_dropdown):
         title = 'מין הפנייה בשלטים'
     elif my_dropdown == "Number":
         title = 'ריבוי הפנייה בשלטים'
+    elif my_dropdown == "Tense":
+        title = 'פנייה בציווי או בבקשה בשלטים'
+    elif my_dropdown == "Position":
+        title = 'בקשה על דרך החיוב או השלילה בשלטים'
     pie_chart = px.pie(
         data_frame=dff,
-        values='Amount',
+        values=amount,
         names=my_dropdown,
         color=my_dropdown,
         # color_discrete_map={"male":"blue","female":"red","none":"yellow","both":"green"},
@@ -75,6 +83,5 @@ def update_graph(my_dropdown):
 
     return pie_chart
 
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)

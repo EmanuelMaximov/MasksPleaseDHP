@@ -149,11 +149,23 @@ def rec_imperative(ds):
 
 
 if __name__ == '__main__':
-    description_cells = ga.read_from_spreadsheet()
-    for cell in description_cells:
-        for text in cell:
-            processed_text = process_text(text)
-            print("Gender: ", rec_gender(processed_text),
-                  ", Number: ", rec_number(processed_text),
-                  ", Imperative: ", rec_imperative(processed_text),
-                  ", Negative: ", rec_pos_neg(processed_text))
+    # description_cells = ga.read_from_spreadsheet()
+    # default_list = [['Gender', 'Number', 'Tense', 'Position']]
+    # for cell in description_cells:
+    #     for text in cell:
+    #         processed_text = process_text(text)
+    #         arr = [rec_gender(processed_text), rec_number(processed_text),
+    #                rec_imperative(processed_text), rec_pos_neg(processed_text)]
+    #         default_list.append(arr)
+    #         # print("Gender: ", rec_gender(processed_text),
+    #         #       ", Number: ", rec_number(processed_text),
+    #         #       ", Imperative: ", rec_imperative(processed_text),
+    #         #       ", Negative: ", rec_pos_neg(processed_text))
+    # # print(default_list)
+    # ga.write_to_spreadsheet(default_list)
+    ddpc.app.run_server(debug=True)
+
+# לבדוק אם מספר השלטים בקובץ תואם למספר השלטים שאנחנו מדפיסים
+# לעשות קובץ שאליו ייכתב מאיזו שורה לקרוא פעם הבאה כדי לא להריץ הכול מחדש
+# תיקון שגיאות בנוגע לזיהוי ולסיווג
+# להבין מה הפלט עבור שלט עם תיאור ריק ועם תאור בשפה שרה בלבד

@@ -29,12 +29,12 @@ def read_from_spreadsheet():
     return values
 
 
-def write_to_spreadsheet():
+def write_to_spreadsheet(input_list_of_lists):
     service = build('sheets', 'v4', credentials=creds)
     # Call the Sheets API
     sheet = service.spreadsheets()
-    input = [[True, False, True], [True]]  # list of lists
-    body_input = {"values": input}
+    # input = [['female', 'female', 'male', 'none'], ['female', 'female', 'male', 'none']]  # list of lists
+    body_input = {"values": input_list_of_lists}
     insert_request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                           range="Sheet2!C5", valueInputOption="USER_ENTERED",
+                                           range="Sheet2!B1", valueInputOption="USER_ENTERED",
                                            body=body_input).execute()
