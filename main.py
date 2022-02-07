@@ -51,6 +51,8 @@ def gender(item):
         return 'female'
     elif item['morph'][12] == '2' or item['morph'][12] == '3':
         return 'male'
+    elif item['morph'][12] == '6':
+        return 'both'
 
 
 def rec_gender(ds):
@@ -60,15 +62,17 @@ def rec_gender(ds):
         if item['morph'][13] == 'D' and item['word'] != x:
             if gender(item) == 'female':
                 return 'female'
-            if gender(item) == 'male':
+            elif gender(item) == 'male':
                 return 'male'
+            elif gender(item) == 'both':
+                return 'both'
 
     for i in range(len(ds) - 1):
         # check if in i is noun and i+1 is adjective
         if ((ds[i])['morph'])[13] == '6' and (((ds[i + 1])['morph'])[13] == '1') or ((ds[i + 1])['word'] == x):
-            if gender(ds[i]) == 'female':
+            if gender(ds[i + 1]) == 'female' or ((ds[i + 1])['word'] == x):
                 return 'female'
-            if gender(ds[i]) == 'male':
+            if gender(ds[i + 1]) == 'male':
                 return 'male'
     return 'none'
 
@@ -86,7 +90,7 @@ def rec_gender(ds):
 def number(item):
     if item['morph'][11] == '1':
         return 'singular'
-    elif '2' <= item['morph'][11] < '5':
+    elif '2' <= item['morph'][11] < '5' or item['morph'][11] == 'A':
         return 'plural'
     else:
         return 'none'
@@ -118,11 +122,11 @@ def rec_pos_neg(ds):
         z = 'ללא'
         # if item['morph'][13] == '5':
         #     item['pos'] = 'negative'
-        if (item['morph'][12:14] == '13') and (x in item['word']):
+        if (item['morph'][12:14] == '13') or (x in item['word']):
             item['pos'] = 'negative'
-        elif item['morph'][12:14] == '14' and (y in item['word']):
+        elif item['morph'][12:14] == '14' or (y in item['word']):
             item['pos'] = 'negative'
-        elif item['morph'][14] == '8' and (z in item['word']):
+        elif item['morph'][14] == '8' or (z in item['word']):
             item['pos'] = 'negative'
         else:
             item['pos'] = 'positive'
@@ -138,8 +142,8 @@ def rec_imperative(ds):
     for item in ds:
         if item['morph'][9] == 'A':
             item['imperative'] = 'imperative'
-        elif '!' in item['word']:
-            item['imperative'] = 'imperative'
+        # elif '!' in item['word']:
+        #     item['imperative'] = 'imperative'
         else:
             item['imperative'] = 'none'
     for item in ds:
@@ -157,15 +161,23 @@ if __name__ == '__main__':
     #         arr = [rec_gender(processed_text), rec_number(processed_text),
     #                rec_imperative(processed_text), rec_pos_neg(processed_text)]
     #         default_list.append(arr)
-    #         # print("Gender: ", rec_gender(processed_text),
+    #         # print("Text: ", text, "\n",
+    #         #       "Gender: ", rec_gender(processed_text),
     #         #       ", Number: ", rec_number(processed_text),
     #         #       ", Imperative: ", rec_imperative(processed_text),
     #         #       ", Negative: ", rec_pos_neg(processed_text))
-    # # print(default_list)
     # ga.write_to_spreadsheet(default_list)
-    ddpc.app.run_server(debug=True)
+    # ddpc.app.run_server(debug=True)
 
-# לבדוק אם מספר השלטים בקובץ תואם למספר השלטים שאנחנו מדפיסים
+    # for cheking:
+    text = 'הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר'
+    processed_text = process_text(text)
+    print("Text: ", text, "\n",
+          "Gender: ", rec_gender(processed_text),
+          ", Number: ", rec_number(processed_text),
+          ", Imperative: ", rec_imperative(processed_text),
+          ", Negative: ", rec_pos_neg(processed_text))
+
 # לעשות קובץ שאליו ייכתב מאיזו שורה לקרוא פעם הבאה כדי לא להריץ הכול מחדש
 # תיקון שגיאות בנוגע לזיהוי ולסיווג
-# להבין מה הפלט עבור שלט עם תיאור ריק ועם תאור בשפה שרה בלבד
+# להבין מה הפלט עבור שלט עם תיאור ריק ועם תאור בשפה זרה בלבד

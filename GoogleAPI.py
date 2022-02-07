@@ -16,7 +16,7 @@ creds = service_account.Credentials.from_service_account_file(
 # full spreadsheet URL:
 # https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=263391688
 SAMPLE_SPREADSHEET_ID = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
-SAMPLE_RANGE_NAME = "Sheet2!A2:A"  # the column with the description
+SAMPLE_RANGE_NAME = "Sheet2!A2:A10"  # the column with the description
 
 
 def read_from_spreadsheet():
