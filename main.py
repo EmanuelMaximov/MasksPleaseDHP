@@ -19,7 +19,6 @@ def process_text(text):
     r.encoding = "UTF-8"
     x = json.loads(r.text)
     ds = []
-    # print(x)
     for item in x:
         y = {}
         if (('word' in item) and item['sep'] == False) or (
@@ -152,32 +151,66 @@ def rec_imperative(ds):
     return 'not imperative'
 
 
+def test_output(text):
+    # for testing:
+    pt = process_text(text)
+    print("Text: ", text, "\n",
+          "Gender: ", rec_gender(pt),
+          ", Number: ", rec_number(pt),
+          ", Imperative: ", rec_imperative(pt),
+          ", Negative: ", rec_pos_neg(pt))
+
+
 if __name__ == '__main__':
-    # description_cells = ga.read_from_spreadsheet()
-    # default_list = [['Gender', 'Number', 'Tense', 'Position']]
-    # for cell in description_cells:
-    #     for text in cell:
-    #         processed_text = process_text(text)
-    #         arr = [rec_gender(processed_text), rec_number(processed_text),
-    #                rec_imperative(processed_text), rec_pos_neg(processed_text)]
-    #         default_list.append(arr)
-    #         # print("Text: ", text, "\n",
-    #         #       "Gender: ", rec_gender(processed_text),
-    #         #       ", Number: ", rec_number(processed_text),
-    #         #       ", Imperative: ", rec_imperative(processed_text),
-    #         #       ", Negative: ", rec_pos_neg(processed_text))
-    # ga.write_to_spreadsheet(default_list)
+    sheet_tab_name = 'Sheet2'
+    sheet_tab_id = 1759206245
+
+    # Clear all filters
+    ga.clear_filter(sheet_tab_id)
+
+    # Reset to 0 if the file is empty or it's the first run over the spreadsheet
+    f = open("SpreadsheetSize.txt", "r")
+    if f == '' or ga.read_from_spreadsheet(sheet_tab_name, 'B2', 'E2') == []:
+        f = open("SpreadsheetSize.txt", "w")
+        f.write(str(0))
+        f.close()
+        f = open("SpreadsheetSize.txt", "r")
+
+    # Check if there is a need to run code
+    old_num_of_signs = int(f.read())
+    current_num_of_signs = int(ddpc.num_of_signs)
+
+    if old_num_of_signs < current_num_of_signs:
+
+        start_cell = str(old_num_of_signs + 2)
+
+        # Read 'description' cells from spreadsheet
+        description_cells = ga.read_from_spreadsheet(sheet_tab_name, 'A' + start_cell, 'A')
+
+        default_list = []
+
+        for cell in description_cells:
+            for text in cell:
+                # Process text with Dicta API
+                processed_text = process_text(text)
+
+                # Making a row with the information
+                arr = [rec_gender(processed_text), rec_number(processed_text),
+                       rec_imperative(processed_text), rec_pos_neg(processed_text)]
+                default_list.append(arr)
+
+        # Write into the spreadsheet
+        ga.write_to_spreadsheet(default_list, sheet_tab_name, 'B' + start_cell)
+
+        # Update current spreadsheet size
+        f = open("SpreadsheetSize.txt", "w")
+        f.write(str(current_num_of_signs))
+        f.close()
+
+    # Run the Dashboard with the Pie Charts
     ddpc.app.run_server(debug=True)
 
-    # # for cheking:
-    # text = 'הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר'
-    # processed_text = process_text(text)
-    # print("Text: ", text, "\n",
-    #       "Gender: ", rec_gender(processed_text),
-    #       ", Number: ", rec_number(processed_text),
-    #       ", Imperative: ", rec_imperative(processed_text),
-    #       ", Negative: ", rec_pos_neg(processed_text))
+    # Clear all filters before exiting
+    ga.clear_filter(sheet_tab_id)
 
-# לעשות קובץ שאליו ייכתב מאיזו שורה לקרוא פעם הבאה כדי לא להריץ הכול מחדש
-# תיקון שגיאות בנוגע לזיהוי ולסיווג
-# להבין מה הפלט עבור שלט עם תיאור ריק ועם תאור בשפה זרה בלבד
+    # test_output('הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר')

@@ -12,11 +12,10 @@ creds = None
 creds = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('sheets', 'v4', credentials=creds)
-# The ID spreadsheet.
+
 # full spreadsheet URL:
 # https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8
 SAMPLE_SPREADSHEET_ID = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
-SAMPLE_RANGE_NAME = "Sheet2!A2:A10"  # the column with the description
 
 
 def clear_filter(sheet_id):
@@ -91,7 +90,8 @@ def filter_spreadsheet(sheet_id, column_number, sort_by_str):
     response = request.execute()
 
 
-def read_from_spreadsheet():
+def read_from_spreadsheet(tab_name, start_cell, end_cell):
+    SAMPLE_RANGE_NAME = str(tab_name + '!' + start_cell + ':' + end_cell)  # the column with the description
     # Call the Sheets API
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
@@ -101,11 +101,11 @@ def read_from_spreadsheet():
     return values
 
 
-def write_to_spreadsheet(input_list_of_lists):
+def write_to_spreadsheet(input_list_of_lists, tab_name, start_cell):
+    range = str(tab_name + '!' + start_cell)
     # Call the Sheets API
     sheet = service.spreadsheets()
-    # input = [['female', 'female', 'male', 'none'], ['female', 'female', 'male', 'none']]  # list of lists
     body_input = {"values": input_list_of_lists}
     insert_request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                           range="Sheet2!B1", valueInputOption="USER_ENTERED",
+                                           range=range, valueInputOption="USER_ENTERED",
                                            body=body_input).execute()

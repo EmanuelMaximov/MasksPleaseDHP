@@ -4,9 +4,8 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import GoogleAPI as ga
 import webbrowser
-
-# import plotly as pl
 
 # Spreadsheet URL
 sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
@@ -18,8 +17,6 @@ num_of_signs = str(len(df))
 # for counting cells instead of adding Amount Column
 amount = [1 for i in range(len(df))]
 
-# you need to include __name__ in your Dash constructor if
-# you plan to use a custom CSS or JavaScript in your Dash apps
 app = dash.Dash(__name__)
 
 # ---------------------------------------------------------------
@@ -42,8 +39,16 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-        dcc.Graph(id='the_graph'), dash.html.Div(id="open-link")
+        dcc.Graph(id='the_graph')
     ]),
+    html.Div([
+        # for opening new tab with the given URL
+        dash.html.Div(id="open-link"),
+    ]),
+    html.Div([
+        # dcc.Store stores the intermediate value to share mutual values
+        dcc.Store(id='intermediate-value')
+    ])
 
 ])
 
@@ -54,26 +59,44 @@ app.layout = html.Div([
 @app.callback(
     Output(component_id='open-link', component_property='children'),
     [Input(component_id='the_graph', component_property='clickData')],
-    [Input(component_id='my_dropdown', component_property='value')]
+    [Input(component_id='intermediate-value', component_property='data')]  # read from the store
 )
-def open_filtered_spreadsheet(clickData, value):
+def open_filtered_spreadsheet(clickData, data):
     if not clickData:
         raise dash.exceptions.PreventUpdate
-    param = ((clickData['points'])[0])['label']
-    column = value
-    print(param, column)
-    # webbrowser.open()
+    else:
+        param = ((clickData['points'])[0])['label']
+        col_name = data
+        if param in {'female', 'male', 'none', 'both'} and col_name == 'Gender' \
+                or param in {'plural', 'singular', 'none'} and col_name == 'Number' \
+                or param in {'negative', 'positive'} and col_name == 'Position' \
+                or param in {'imperative', 'not imperative'} and col_name == 'Tense':
+            # filter the spreadsheet by GoogleApi
+            column_number = 0
+            if col_name == 'Gender':
+                column_number = 1
+            elif col_name == 'Number':
+                column_number = 2
+            elif col_name == 'Tense':
+                column_number = 3
+            elif col_name == 'Position':
+                column_number = 4
+            ga.filter_spreadsheet(1759206245, column_number, param)
+            # open spreadsheet URL
+            webbrowser.open_new(
+                'https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=1759206245')
 
 
+# ---------------------------------------------------------------
 # CALLBACK for handling choosing values in the DropDown menu
 @app.callback(
     Output(component_id='the_graph', component_property='figure'),
+    Output(component_id='intermediate-value', component_property='data'),  # write into the store
     [Input(component_id='my_dropdown', component_property='value')]
 )
 def update_graph(my_dropdown):
     # copying the datafile
     dff = df
-
     # adjusting the title in Hebrew
     title = ""
     if my_dropdown == "Gender":
@@ -105,4 +128,4 @@ def update_graph(my_dropdown):
 
     # exporting html file for the chart in offline mode
     # pl.offline.plot(pie_chart, filename='file.html')
-    return pie_chart
+    return pie_chart, my_dropdown
