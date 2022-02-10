@@ -167,16 +167,16 @@ if __name__ == '__main__':
     #         #       ", Imperative: ", rec_imperative(processed_text),
     #         #       ", Negative: ", rec_pos_neg(processed_text))
     # ga.write_to_spreadsheet(default_list)
-    # ddpc.app.run_server(debug=True)
+    ddpc.app.run_server(debug=True)
 
-    # for cheking:
-    text = 'הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר'
-    processed_text = process_text(text)
-    print("Text: ", text, "\n",
-          "Gender: ", rec_gender(processed_text),
-          ", Number: ", rec_number(processed_text),
-          ", Imperative: ", rec_imperative(processed_text),
-          ", Negative: ", rec_pos_neg(processed_text))
+    # # for cheking:
+    # text = 'הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר'
+    # processed_text = process_text(text)
+    # print("Text: ", text, "\n",
+    #       "Gender: ", rec_gender(processed_text),
+    #       ", Number: ", rec_number(processed_text),
+    #       ", Imperative: ", rec_imperative(processed_text),
+    #       ", Negative: ", rec_pos_neg(processed_text))
 
 # לעשות קובץ שאליו ייכתב מאיזו שורה לקרוא פעם הבאה כדי לא להריץ הכול מחדש
 # תיקון שגיאות בנוגע לזיהוי ולסיווג

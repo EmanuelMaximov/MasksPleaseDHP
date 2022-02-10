@@ -4,6 +4,9 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import webbrowser
+
+# import plotly as pl
 
 # Spreadsheet URL
 sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
@@ -39,7 +42,7 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-        dcc.Graph(id='the_graph')
+        dcc.Graph(id='the_graph'), dash.html.Div(id="open-link")
     ]),
 
 ])
@@ -47,7 +50,22 @@ app.layout = html.Div([
 
 # ---------------------------------------------------------------
 
+# CALLBACK for handling clicks on the graph
+@app.callback(
+    Output(component_id='open-link', component_property='children'),
+    [Input(component_id='the_graph', component_property='clickData')],
+    [Input(component_id='my_dropdown', component_property='value')]
+)
+def open_filtered_spreadsheet(clickData, value):
+    if not clickData:
+        raise dash.exceptions.PreventUpdate
+    param = ((clickData['points'])[0])['label']
+    column = value
+    print(param, column)
+    # webbrowser.open()
 
+
+# CALLBACK for handling choosing values in the DropDown menu
 @app.callback(
     Output(component_id='the_graph', component_property='figure'),
     [Input(component_id='my_dropdown', component_property='value')]
@@ -55,6 +73,8 @@ app.layout = html.Div([
 def update_graph(my_dropdown):
     # copying the datafile
     dff = df
+
+    # adjusting the title in Hebrew
     title = ""
     if my_dropdown == "Gender":
         title = 'מין הפנייה בשלטים'
@@ -64,6 +84,8 @@ def update_graph(my_dropdown):
         title = 'פנייה בציווי או בבקשה בשלטים'
     elif my_dropdown == "Position":
         title = 'בקשה על דרך החיוב או השלילה בשלטים'
+
+    # Making the Pie Chart
     pie_chart = px.pie(
         data_frame=dff,
         values=amount,
@@ -81,7 +103,6 @@ def update_graph(my_dropdown):
                                                'font': {'color': 'rgb(0, 0, 0)', 'size': 15},
                                                'showarrow': False, 'xanchor': 'center'}]))
 
+    # exporting html file for the chart in offline mode
+    # pl.offline.plot(pie_chart, filename='file.html')
     return pie_chart
-
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
