@@ -162,6 +162,9 @@ def test_output(text):
 
 
 if __name__ == '__main__':
+    # print(process_text('חובה לעטות מסכה king'))
+    # test_output('KING שים מסכה מהר KING')
+
     sheet_tab_name = 'Sheet2'
     sheet_tab_id = 1759206245
 
@@ -193,10 +196,13 @@ if __name__ == '__main__':
             for text in cell:
                 # Process text with Dicta API
                 processed_text = process_text(text)
-
-                # Making a row with the information
-                arr = [rec_gender(processed_text), rec_number(processed_text),
-                       rec_imperative(processed_text), rec_pos_neg(processed_text)]
+                # in case the whole text is in foreign language or empty
+                if not processed_text:
+                    arr = ['NULL', 'NULL', 'NULL', 'NULL']
+                else:
+                    # Making a row with the information
+                    arr = [rec_gender(processed_text), rec_number(processed_text),
+                           rec_imperative(processed_text), rec_pos_neg(processed_text)]
                 default_list.append(arr)
 
         # Write into the spreadsheet
@@ -212,5 +218,3 @@ if __name__ == '__main__':
 
     # Clear all filters before exiting
     ga.clear_filter(sheet_tab_id)
-
-    # test_output('הכניסה ללא מסיכה אסורה! שמרו על מרחק של שני מטר')

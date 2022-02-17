@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 from google.oauth2 import service_account
 
 # type of service we need an access to
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']  # read and write premission
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']  # read and write permission
 # credentials to access this service
 SERVICE_ACCOUNT_FILE = 'keys.json'
 creds = None
