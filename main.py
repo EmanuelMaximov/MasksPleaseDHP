@@ -21,7 +21,7 @@ def process_text(text):
     ds = []
     for item in x:
         y = {}
-        if ('word' in item) and item['sep'] == False:
+        if ('word' in item) and item['sep'] is False:
             y['word'] = item['word']
         for inner in item['options']:
             y['morph'] = '0x{0:0{1}X}'.format(int(inner['morph']), 16)
@@ -55,17 +55,7 @@ def remove_closing(ds):
     return ds_copy
 
 
-# check if male that it's not Preposition, like:
-# check how to recognize word: מכם/מכן
-# def suffix_gender(item):
-#     if item['morph'][7] == '9' or item['morph'][7:9] == '10':
-#         item['gender'] = 'female'
-#     elif item['morph'][7] == '8' or item['morph'][8] == '8':
-#         item['gender'] = 'male'
-#     else:
-#         item['gender'] = 'none'
-
-
+# >>>>>>>>>>>>>>>>>>>>>>>>> Gender <<<<<<<<<<<<<<<<<<<<<<<<<
 def gender(item):
     if item['morph'][12] == '4' or item['morph'][12] == '5':
         return 'female'
@@ -102,16 +92,7 @@ def rec_gender(ds):
     return 'none'
 
 
-# יחיד רבים
-# def suffix_number(item):
-#     if item['morph'][7] == '4':
-#         item['number'] = 'singular'
-#     elif item['morph'][7] == '8' or item['morph'][7] == '9':
-#         item['number'] = 'plural'
-#     else:
-#         item['number'] = 'none'
-
-
+# >>>>>>>>>>>>>>>>>>>>>>>>> Number <<<<<<<<<<<<<<<<<<<<<<<<<
 def number(item):
     if item['morph'][11] == '1':
         return 'singular'
@@ -139,30 +120,20 @@ def rec_number(ds):
     return 'none'
 
 
-# חיוב ושלילה
+# >>>>>>>>>>>>>>>>>>>>>>>>> Positive/Negative  <<<<<<<<<<<<<<<<<<<<<<<<<
 def rec_pos_neg(ds):
+    words = {'אין', 'אסור', 'ללא', 'בלי'}
     for item in ds:
-        x = 'אין'
-        y = 'אסור'
-        z = 'ללא'
         # if item['morph'][13] == '5':
-        #     item['pos'] = 'negative'
-        if (item['morph'][12:14] == '13') or (x in item['word']):
-            item['pos'] = 'negative'
-        elif item['morph'][12:14] == '14' or (y in item['word']):
-            item['pos'] = 'negative'
-        elif item['morph'][14] == '8' or (z in item['word']):
-            item['pos'] = 'negative'
-        else:
-            item['pos'] = 'positive'
-
-    for item in ds:
-        if item['pos'] == 'negative':
+        if (item['morph'][12:14] == '13') or \
+                item['morph'][12:14] == '14' or \
+                item['morph'][14] == '8' or \
+                item['word'] in words:
             return 'negative'
     return 'positive'
 
 
-# ציווי ובקשה
+# >>>>>>>>>>>>>>>>>>>>>>>>> Imperative  <<<<<<<<<<<<<<<<<<<<<<<<<
 def rec_imperative(ds):
     for item in ds:
         # tense is imperative or tense is future and person is 2
@@ -187,10 +158,7 @@ def test_output(text):
           ", Negative: ", rec_pos_neg(pt))
 
 
-if __name__ == '__main__':
-    # check = 'לקוחות יקרים בהתאם להנחיות משרד הבריאות בכל עת ישהו בתוך המספרה לקוח 1 לקוח 1 ימתין בחוץ כל לקוח יצטייד במסכה ובדיקת חום בכניסה תודה על שיתוף הפעולה'
-    # test_output(check)
-
+def run():
     sheet_tab_name = 'Sheet2'
     sheet_tab_id = 1759206245
 
@@ -245,3 +213,8 @@ if __name__ == '__main__':
 
     # Clear all filters before exiting
     ga.clear_filter(sheet_tab_id)
+
+
+if __name__ == '__main__':
+    check = 'לקוחות יקרים בהתאם להנחיות משרד הבריאות בכל עת ישהו בתוך המספרה לקוח 1 לקוח 1 ימתין בחוץ כל לקוח יצטייד במסכה ובדיקת חום בכניסה תודה על שיתוף הפעולה'
+    test_output(check)
