@@ -138,11 +138,6 @@ def rec_imperative(ds):
     for item in ds:
         # tense is imperative or tense is future and person is 2
         if item['morph'][9] == 'A' or (item['morph'][9] == '8' and item['morph'][10:12] == '10'):
-            item['imperative'] = 'imperative'
-        else:
-            item['imperative'] = 'none'
-    for item in ds:
-        if item['imperative'] == 'imperative':
             return 'imperative'
     return 'not imperative'
 
