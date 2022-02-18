@@ -21,17 +21,38 @@ def process_text(text):
     ds = []
     for item in x:
         y = {}
-        if (('word' in item) and item['sep'] == False) or (
-                ('word' in item) and item['word'] == '!' and item['sep'] == True):
+        if ('word' in item) and item['sep'] == False:
             y['word'] = item['word']
-            if item['word'] == '!':
-                y['morph'] = '0x{0:0{1}X}'.format(int(0), 16)
         for inner in item['options']:
             y['morph'] = '0x{0:0{1}X}'.format(int(inner['morph']), 16)
         if len(y) > 0:
             ds.append(y)
 
     return ds
+
+
+def remove_definitearticle_verb(ds):
+    ds_copy = ds
+    i = 0
+    ran = len(ds_copy)
+    while i < ran:
+        # check if in i is Definitearticle ("ה" הידיעה) and i+1 is verb
+        # example: החנות מכילה
+        if ((ds_copy[i])['morph'])[17] == '4' and i + 1 < ran:
+            if ((ds_copy[i + 1])['morph'])[13] == 'D':
+                ds_copy.pop(i + 1)
+        i = i + 1
+        ran = len(ds_copy)
+    return ds_copy
+
+
+def remove_closing(ds):
+    x = {'בתודה', 'תודה', 'ותודה', 'בברכה', 'בברכת', 'צודה'}
+    ds_copy = ds
+    for i in range(len(ds_copy)):
+        if (ds_copy[i])['word'] in x:
+            return ds_copy[0:i]
+    return ds_copy
 
 
 # check if male that it's not Preposition, like:
@@ -55,10 +76,11 @@ def gender(item):
 
 
 def rec_gender(ds):
-    x = 'יקרה'
     for item in ds:
         # check for pos VERB
-        if item['morph'][13] == 'D' and item['word'] != x:
+        # ensure the verb In future/imperative tense and person 2
+        if item['morph'][13] == 'D' \
+                and (item['morph'][9] == 'A' or (item['morph'][9] == '8' and item['morph'][10:12] == '10')):
             if gender(item) == 'female':
                 return 'female'
             elif gender(item) == 'male':
@@ -68,11 +90,15 @@ def rec_gender(ds):
 
     for i in range(len(ds) - 1):
         # check if in i is noun and i+1 is adjective
-        if ((ds[i])['morph'])[13] == '6' and (((ds[i + 1])['morph'])[13] == '1') or ((ds[i + 1])['word'] == x):
-            if gender(ds[i + 1]) == 'female' or ((ds[i + 1])['word'] == x):
-                return 'female'
-            if gender(ds[i + 1]) == 'male':
-                return 'male'
+        if ((ds[i])['morph'])[13] == '6' and \
+                ((((ds[i + 1])['morph'])[13] == '1') or (
+                        (ds[i + 1])['word'] in {'יקרה', 'יקרים', 'יקרות', 'יקר'})):
+            # check the is no definitearticle
+            if ((ds[i])['morph'])[17] != '4' and ((ds[i + 1])['morph'])[17] != '4':
+                if gender(ds[i + 1]) == 'female' or ((ds[i + 1])['word'] in {'יקרות', 'יקרה'}):
+                    return 'female'
+                if gender(ds[i + 1]) == 'male' or ((ds[i + 1])['word'] in {'יקרים', 'יקר'}):
+                    return 'male'
     return 'none'
 
 
@@ -139,10 +165,9 @@ def rec_pos_neg(ds):
 # ציווי ובקשה
 def rec_imperative(ds):
     for item in ds:
-        if item['morph'][9] == 'A':
+        # tense is imperative or tense is future and person is 2
+        if item['morph'][9] == 'A' or (item['morph'][9] == '8' and item['morph'][10:12] == '10'):
             item['imperative'] = 'imperative'
-        # elif '!' in item['word']:
-        #     item['imperative'] = 'imperative'
         else:
             item['imperative'] = 'none'
     for item in ds:
@@ -153,7 +178,8 @@ def rec_imperative(ds):
 
 def test_output(text):
     # for testing:
-    pt = process_text(text)
+    pt = remove_closing(remove_definitearticle_verb(process_text(text)))
+    print(pt)
     print("Text: ", text, "\n",
           "Gender: ", rec_gender(pt),
           ", Number: ", rec_number(pt),
@@ -162,8 +188,8 @@ def test_output(text):
 
 
 if __name__ == '__main__':
-    # print(process_text('חובה לעטות מסכה king'))
-    # test_output('KING שים מסכה מהר KING')
+    # check = 'לקוחות יקרים בהתאם להנחיות משרד הבריאות בכל עת ישהו בתוך המספרה לקוח 1 לקוח 1 ימתין בחוץ כל לקוח יצטייד במסכה ובדיקת חום בכניסה תודה על שיתוף הפעולה'
+    # test_output(check)
 
     sheet_tab_name = 'Sheet2'
     sheet_tab_id = 1759206245
@@ -194,8 +220,9 @@ if __name__ == '__main__':
 
         for cell in description_cells:
             for text in cell:
+                print(text)
                 # Process text with Dicta API
-                processed_text = process_text(text)
+                processed_text = remove_closing(remove_definitearticle_verb(process_text(text)))
                 # in case the whole text is in foreign language or empty
                 if not processed_text:
                     arr = ['NULL', 'NULL', 'NULL', 'NULL']
