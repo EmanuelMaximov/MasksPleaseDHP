@@ -56,6 +56,20 @@ def remove_closing(ds):
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>> Gender <<<<<<<<<<<<<<<<<<<<<<<<<
+
+def adj_gender_number(ds):
+    for i in range(len(ds) - 1):
+        # check if in i is noun and i+1 is adjective
+        if ((ds[i])['morph'])[13] == '6' and \
+                ((((ds[i + 1])['morph'])[13] == '1') or (
+                        (ds[i + 1])['word'] in {'יקרה', 'יקרים', 'יקרות', 'יקר'})):
+            # check there is no definitearticle
+            # example: התו הירוק
+            if ((ds[i])['morph'])[17] != '4' and ((ds[i + 1])['morph'])[17] != '4':
+                return ds[i + 1]
+    return 'none'
+
+
 def gender(item):
     if item['morph'][12] == '4' or item['morph'][12] == '5':
         return 'female'
@@ -68,9 +82,13 @@ def gender(item):
 def rec_gender(ds):
     for item in ds:
         # check for pos VERB
-        # ensure the verb In future/imperative tense and person 2
+        # ensure the verb In imperative
+        # or in future and person_2
+        # or in present and person_any
         if item['morph'][13] == 'D' \
-                and (item['morph'][9] == 'A' or (item['morph'][9] == '8' and item['morph'][10:12] == '10')):
+                and (item['morph'][9] == 'A' or
+                     (item['morph'][9] == '8' and item['morph'][10:12] == '10') or
+                     (item['morph'][9] == '6' and item['morph'][10] == '2')):
             if gender(item) == 'female':
                 return 'female'
             elif gender(item) == 'male':
@@ -78,17 +96,13 @@ def rec_gender(ds):
             elif gender(item) == 'both':
                 return 'both'
 
-    for i in range(len(ds) - 1):
-        # check if in i is noun and i+1 is adjective
-        if ((ds[i])['morph'])[13] == '6' and \
-                ((((ds[i + 1])['morph'])[13] == '1') or (
-                        (ds[i + 1])['word'] in {'יקרה', 'יקרים', 'יקרות', 'יקר'})):
-            # check the is no definitearticle
-            if ((ds[i])['morph'])[17] != '4' and ((ds[i + 1])['morph'])[17] != '4':
-                if gender(ds[i + 1]) == 'female' or ((ds[i + 1])['word'] in {'יקרות', 'יקרה'}):
-                    return 'female'
-                if gender(ds[i + 1]) == 'male' or ((ds[i + 1])['word'] in {'יקרים', 'יקר'}):
-                    return 'male'
+    # check for pos ADJECTIIVE
+    adj_item = adj_gender_number(ds)
+    if adj_item != 'none':
+        if gender(adj_item) == 'female' or (adj_item['word'] in {'יקרות', 'יקרה'}):
+            return 'female'
+        if gender(adj_item) == 'male' or (adj_item['word'] in {'יקרים', 'יקר'}):
+            return 'male'
     return 'none'
 
 
@@ -98,25 +112,29 @@ def number(item):
         return 'singular'
     elif '2' <= item['morph'][11] < '5' or item['morph'][11] == 'A':
         return 'plural'
-    else:
-        return 'none'
 
 
 def rec_number(ds):
     for item in ds:
         # check for pos VERB
-        if item['morph'][13] == 'D':
+        # ensure the verb In imperative
+        # or in future and person_2
+        # or in present and person_any
+        if item['morph'][13] == 'D' \
+                and (item['morph'][9] == 'A' or
+                     (item['morph'][9] == '8' and item['morph'][10:12] == '10') or
+                     (item['morph'][9] == '6' and item['morph'][10] == '2')):
             if number(item) == 'plural':
                 return 'plural'
             if number(item) == 'singular':
                 return 'singular'
-    for item in ds:
-        # check for pos ADJECTIIVE
-        if item['morph'][13] == '1':
-            if number(item) == 'plural':
-                return 'plural'
-            if number(item) == 'singular':
-                return 'singular'
+    # check for pos ADJECTIIVE
+    adj_item = adj_gender_number(ds)
+    if adj_item != 'none':
+        if number(adj_item) == 'singular' or (adj_item['word'] in {'יקר', 'יקרה'}):
+            return 'singular'
+        if number(adj_item) == 'plural' or (adj_item['word'] in {'יקרים', 'יקרות'}):
+            return 'plural'
     return 'none'
 
 
@@ -124,7 +142,6 @@ def rec_number(ds):
 def rec_pos_neg(ds):
     words = {'אין', 'אסור', 'ללא', 'בלי'}
     for item in ds:
-        # if item['morph'][13] == '5':
         if (item['morph'][12:14] == '13') or \
                 item['morph'][12:14] == '14' or \
                 item['morph'][14] == '8' or \
@@ -140,17 +157,6 @@ def rec_imperative(ds):
         if item['morph'][9] == 'A' or (item['morph'][9] == '8' and item['morph'][10:12] == '10'):
             return 'imperative'
     return 'not imperative'
-
-
-def test_output(text):
-    # for testing:
-    pt = remove_closing(remove_definitearticle_verb(process_text(text)))
-    print(pt)
-    print("Text: ", text, "\n",
-          "Gender: ", rec_gender(pt),
-          ", Number: ", rec_number(pt),
-          ", Imperative: ", rec_imperative(pt),
-          ", Negative: ", rec_pos_neg(pt))
 
 
 def run():
@@ -188,7 +194,7 @@ def run():
                 processed_text = remove_closing(remove_definitearticle_verb(process_text(text)))
                 # in case the whole text is in foreign language or empty
                 if not processed_text:
-                    arr = ['NULL', 'NULL', 'NULL', 'NULL']
+                    arr = ['Foreign', 'Foreign', 'Foreign', 'Foreign']
                 else:
                     # Making a row with the information
                     arr = [rec_gender(processed_text), rec_number(processed_text),
@@ -210,6 +216,18 @@ def run():
     ga.clear_filter(sheet_tab_id)
 
 
+def test_output(text):
+    # for testing:
+    pt = remove_closing(remove_definitearticle_verb(process_text(text)))
+    print(pt)
+    print("Text: ", text, "\n",
+          "Gender: ", rec_gender(pt),
+          ", Number: ", rec_number(pt),
+          ", Imperative: ", rec_imperative(pt),
+          ", Negative: ", rec_pos_neg(pt))
+
+
 if __name__ == '__main__':
-    check = 'לקוחות יקרים בהתאם להנחיות משרד הבריאות בכל עת ישהו בתוך המספרה לקוח 1 לקוח 1 ימתין בחוץ כל לקוח יצטייד במסכה ובדיקת חום בכניסה תודה על שיתוף הפעולה'
+    check = 'הכניסה עם מסיכות'
     test_output(check)
+    # run()
