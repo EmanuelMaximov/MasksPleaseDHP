@@ -7,9 +7,15 @@ import plotly.express as px
 import GoogleAPI as ga
 import webbrowser
 
-# Spreadsheet URL
+# Spreadsheet Information
 sheet_id = '1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8'
 df = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
+spreadsheet_tab_name = 'mask_please_metadata'
+spreadsheet_tab_id = 263391688
+spreadsheet_read_from_col = 'B'
+spreadsheet_write_to_col = 'V'
+spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=' + str(
+    spreadsheet_tab_id)
 
 # Number of "Mask Please" signs in the database
 num_of_signs = str(len(df))
@@ -74,17 +80,16 @@ def open_filtered_spreadsheet(clickData, data):
             # filter the spreadsheet by GoogleApi
             column_number = 0
             if col_name == 'Gender':
-                column_number = 1
+                column_number = ord(spreadsheet_write_to_col) - ord('A')
             elif col_name == 'Number':
-                column_number = 2
+                column_number = ord(spreadsheet_write_to_col) - ord('A') + 1
             elif col_name == 'Tense':
-                column_number = 3
+                column_number = ord(spreadsheet_write_to_col) - ord('A') + 2
             elif col_name == 'Position':
-                column_number = 4
-            ga.filter_spreadsheet(1759206245, column_number, param)
+                column_number = ord(spreadsheet_write_to_col) - ord('A') + 3
+            ga.filter_spreadsheet(spreadsheet_tab_id, column_number, param)
             # open spreadsheet URL
-            webbrowser.open_new(
-                'https://docs.google.com/spreadsheets/d/1HjK2Qz95uCqtFoOmcRjbbRAfCgp6I6t9iwOmDFnnNt8/edit#gid=1759206245')
+            webbrowser.open_new(spreadsheet_url)
 
 
 # ---------------------------------------------------------------
