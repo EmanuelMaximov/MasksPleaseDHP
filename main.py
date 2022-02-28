@@ -113,12 +113,12 @@ def rec_gender(ds):
 
     # check for specific text
     for i in range(len(ds) - 1):
-        if (ds[i])['word'] in {'לקוחות', 'לקהל', 'לקוח', 'לקוחה'}:
+        if (ds[i])['word'] in {'לקוחות', 'לציבור', 'לקהל', 'לקוח', 'לקוחה'}:
             if (ds[i + 1])['word'] in {'נכבדות', 'נכבדת', 'יקרות', 'יקרה'}:
                 return 'female'
             elif (ds[i + 1])['word'] in {'יקרים', 'נכבדים', 'נכבד', 'יקר'}:
                 return 'male'
-            elif (ds[i + 1])['word'] in {'הלקוחות'}:
+            elif (ds[i + 1])['word'] in {'הלקוחות', 'המבקרים'}:
                 return 'both'
 
     # # check for pos ADJECTIIVE
