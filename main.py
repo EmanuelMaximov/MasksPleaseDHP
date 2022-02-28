@@ -118,7 +118,7 @@ def rec_gender(ds):
                 return 'female'
             elif (ds[i + 1])['word'] in {'יקרים', 'נכבדים', 'נכבד', 'יקר'}:
                 return 'male'
-            elif (ds[i + 1])['word'] in {'הלקוחות', 'המבקרים'}:
+            elif (ds[i + 1])['word'] in {'הלקוחות', 'לקוחותינו', 'המבקרים'}:
                 return 'both'
 
     # # check for pos ADJECTIIVE
