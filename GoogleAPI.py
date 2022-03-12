@@ -1,4 +1,3 @@
-from __future__ import print_function
 from googleapiclient.discovery import build
 
 # go to the project and import service account
@@ -8,7 +7,6 @@ from google.oauth2 import service_account
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']  # read and write permission
 # credentials to access this service
 SERVICE_ACCOUNT_FILE = 'keys.json'
-creds = None
 creds = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('sheets', 'v4', credentials=creds)
