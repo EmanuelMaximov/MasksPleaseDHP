@@ -183,9 +183,8 @@ def rec_pos_neg(ds):
     words = {'אין', 'אסור', 'ללא', 'בלי'}
     for item in ds:
         # item['morph'][12:14] == '14' or \ #Modal: חובה, צריך
-        # look for preposition: בלי or EXISTENTIAL: אין
-        if (item['morph'][12:14] == '13') or \
-                item['morph'][14] == '8' or \
+        # look for preposition: בלי
+        if item['morph'][14] == '8' or \
                 item['word'] in words:
             return 'negative'
     return 'positive'
